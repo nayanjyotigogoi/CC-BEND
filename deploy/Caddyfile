@@ -9,8 +9,8 @@ tohfaah.online, www.tohfaah.online {
 	reverse_proxy api:80
 }
 
-# Website (frontend repository, published on the host at 127.0.0.1:3000)
+# Website (frontend repository; its "web" container is on the shared "cafechalao" network)
 tohfaah.com, www.tohfaah.com {
 	encode gzip
-	reverse_proxy host.docker.internal:3000
+	reverse_proxy web:3000
 }

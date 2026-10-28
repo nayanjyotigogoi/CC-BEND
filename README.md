@@ -64,7 +64,7 @@ The production setup in `docker-compose.prod.yml` runs three things:
 
 - **MySQL**, with a volume for its data.
 - **This API**, behind Apache.
-- **Caddy**, which gets HTTPS certificates for both **tohfaah.online** (this API) and **tohfaah.com** (the website from the frontend repository, running on the same server at `127.0.0.1:3000`).
+- **Caddy**, which gets HTTPS certificates for both **tohfaah.online** (this API) and **tohfaah.com** (the website from the frontend repository, on the same server; it joins this setup's private `cafechalao` network).
 
 ### Steps
 

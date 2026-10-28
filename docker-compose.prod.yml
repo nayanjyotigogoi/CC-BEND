@@ -1,6 +1,6 @@
 # Production API for https://tohfaah.online, plus MySQL and Caddy (HTTPS for both domains).
-# The website (frontend repo "cafechalao") runs on this same server at 127.0.0.1:3000; Caddy forwards
-# https://tohfaah.com to it.
+# The website (frontend repo "cafechalao") runs on this same server and joins the shared "cafechalao"
+# network created here, so Caddy forwards https://tohfaah.com to it. Start this backend first.
 #
 # First time: cp .env.production.example .env.production, fill it in, point the DNS of both domains here, then:
 #   docker compose -f docker-compose.prod.yml --env-file .env.production up -d --build
@@ -28,11 +28,15 @@ services:
     restart: unless-stopped
     depends_on: [api]
     ports: ["80:80", "443:443"]
-    extra_hosts: ["host.docker.internal:host-gateway"]   # reaches the website container on the host
     volumes:
       - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy-data:/data
       - caddy-config:/config
+
+# Named so the frontend's compose file can join it (as an external network).
+networks:
+  default:
+    name: cafechalao
 
 volumes:
   db:
