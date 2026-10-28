@@ -1,0 +1,17 @@
+.env
+.env.*
+!.env.example
+!.env.production.example
+vendor
+node_modules
+storage/logs/*
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+storage/app/public/*
+public/storage
+database/*.sqlite
+tests
+database/seed-data
+docker-compose*.yml
+deploy

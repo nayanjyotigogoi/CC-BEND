@@ -1,0 +1,37 @@
+# LOCAL API in Docker (instead of WAMP + php artisan serve): http://localhost:8000, MySQL on localhost:3307 (root / root).
+#   docker compose up --build
+#   first time, for the demo cafés: docker compose exec api php artisan migrate:fresh --seed
+#   (needs database/seed-data; see README)
+services:
+  db:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: cafechalao
+      MYSQL_ROOT_PASSWORD: root
+    ports: ["3307:3306"]
+    volumes: [db-local:/var/lib/mysql]
+
+  api:
+    build: .
+    depends_on: [db]
+    environment:
+      APP_ENV: local
+      APP_DEBUG: "true"
+      APP_KEY: base64:Y2FmZWNoYWxhby1sb2NhbC1vbmx5LWtleS0xMjM0NTY=
+      APP_URL: http://localhost:8000
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_DATABASE: cafechalao
+      DB_USERNAME: root
+      DB_PASSWORD: root
+      QUEUE_CONNECTION: sync
+      DEMO_MODE: "true"
+      SEED_DATA_PATH: /seed-data
+    ports: ["8000:80"]
+    volumes:
+      - ./database/seed-data:/seed-data:ro
+      - uploads-local:/var/www/html/public/storage
+
+volumes:
+  db-local:
+  uploads-local:

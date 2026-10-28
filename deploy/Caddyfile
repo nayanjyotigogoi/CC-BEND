@@ -1,0 +1,16 @@
+# HTTPS for both sites; certificates come from Let's Encrypt automatically.
+
+# API (this repository)
+tohfaah.online, www.tohfaah.online {
+	encode gzip
+	request_body {
+		max_size 12MB
+	}
+	reverse_proxy api:80
+}
+
+# Website (frontend repository, published on the host at 127.0.0.1:3000)
+tohfaah.com, www.tohfaah.com {
+	encode gzip
+	reverse_proxy host.docker.internal:3000
+}

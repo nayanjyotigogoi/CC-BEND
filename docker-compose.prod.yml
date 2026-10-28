@@ -1,0 +1,41 @@
+# Production API for https://tohfaah.online, plus MySQL and Caddy (HTTPS for both domains).
+# The website (frontend repo "cafechalao") runs on this same server at 127.0.0.1:3000; Caddy forwards
+# https://tohfaah.com to it.
+#
+# First time: cp .env.production.example .env.production, fill it in, point the DNS of both domains here, then:
+#   docker compose -f docker-compose.prod.yml --env-file .env.production up -d --build
+services:
+  db:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+    volumes: [db:/var/lib/mysql]
+
+  api:
+    build: .
+    restart: unless-stopped
+    depends_on: [db]
+    env_file: .env.production
+    volumes:
+      - uploads:/var/www/html/public/storage   # QR codes, logos, menu photos
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    depends_on: [api]
+    ports: ["80:80", "443:443"]
+    extra_hosts: ["host.docker.internal:host-gateway"]   # reaches the website container on the host
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+
+volumes:
+  db:
+  uploads:
+  caddy-data:
+  caddy-config:
